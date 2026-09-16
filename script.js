@@ -87,32 +87,4 @@ if ("IntersectionObserver" in window) {
 } else {
   revealItems.forEach((item) => item.classList.add("is-visible"));
 }
-
-const rsvpForm = document.getElementById("rsvp-form");
-const rsvpSuccess = document.getElementById("rsvp-success");
-const rsvpButton = rsvpForm.querySelector("button");
-
-rsvpForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  if (!config.googleScriptUrl) {
-    rsvpSuccess.textContent = "Добавьте ссылку Google Apps Script в config.js";
-    rsvpSuccess.classList.add("visible");
-    return;
-  }
-
-  const originalText = rsvpButton.textContent;
-  rsvpButton.disabled = true;
-  rsvpButton.textContent = "Отправляем…";
-  try {
-    await fetch(config.googleScriptUrl, { method: "POST", mode: "no-cors", body: new FormData(rsvpForm) });
-    rsvpForm.reset();
-    rsvpSuccess.textContent = "Спасибо! Ваш ответ принят.";
-    rsvpSuccess.classList.add("visible");
-  } catch {
-    rsvpSuccess.textContent = "Не удалось отправить. Попробуйте ещё раз.";
-    rsvpSuccess.classList.add("visible");
-  } finally {
-    rsvpButton.disabled = false;
-    rsvpButton.textContent = originalText;
-  }
 });
