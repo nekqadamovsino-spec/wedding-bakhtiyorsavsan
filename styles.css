@@ -1439,3 +1439,17 @@ a {
 .program-block__ornament {
   display: none !important;
 }
+.invite-card__topline,
+.invite-card__bottomline,
+.venue-block__topline,
+.program-block__topline,
+.dress-code-block__topline,
+.footer-block__line,
+.section-heading__line {
+  display: none !important;
+}
+
+.hero__date {
+  border-top: none !important;
+  border-bottom: none !important;
+}
