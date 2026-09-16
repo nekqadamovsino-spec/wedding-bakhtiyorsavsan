@@ -1436,3 +1436,6 @@ a {
     gap: 12px;
   }
 }
+.program-block__ornament {
+  display: none !important;
+}
