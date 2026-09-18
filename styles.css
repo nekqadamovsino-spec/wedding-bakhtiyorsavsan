@@ -1490,3 +1490,54 @@ a {
 .marquee-strip__track {
   animation-duration: 24s !important;
 }
+.music-button {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 9999;
+
+  width: 52px;
+  height: 52px;
+  padding: 0;
+
+  border: 1px solid #e8c77b;
+  border-radius: 50%;
+
+  background: rgba(128, 16, 34, 0.95);
+  color: white;
+
+  font-size: 24px;
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+
+  transition: transform 0.2s ease;
+}
+
+.music-button:active {
+  transform: scale(0.92);
+}
+
+.music-button.playing {
+  animation: musicPulse 2s infinite;
+}
+
+@keyframes musicPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 6px 20px rgba(0, 0, 0, 0.3),
+      0 0 0 0 rgba(232, 199, 123, 0.5);
+  }
+
+  50% {
+    box-shadow:
+      0 6px 20px rgba(0, 0, 0, 0.3),
+      0 0 0 10px rgba(232, 199, 123, 0);
+  }
+}
