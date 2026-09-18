@@ -87,57 +87,67 @@ if ("IntersectionObserver" in window) {
 } else {
   revealItems.forEach((item) => item.classList.add("is-visible"));
 }
-const weddingMusic = document.getElementById("weddingMusic");
-const musicButton = document.getElementById("musicButton");
+document.addEventListener("DOMContentLoaded", () => {
+  const music = document.getElementById("weddingMusic");
+  const button = document.getElementById("musicButton");
 
-weddingMusic.volume = 0.5;
-
-function updateMusicButton() {
-  if (weddingMusic.paused) {
-    musicButton.textContent = "♫";
-    musicButton.classList.remove("playing");
-    musicButton.setAttribute("aria-label", "Включить музыку");
-  } else {
-    musicButton.textContent = "Ⅱ";
-    musicButton.classList.add("playing");
-    musicButton.setAttribute("aria-label", "Поставить музыку на паузу");
+  if (!music || !button) {
+    console.error("Не найден weddingMusic или musicButton");
+    return;
   }
-}
 
-async function startMusic() {
-  try {
-    await weddingMusic.play();
-    updateMusicButton();
-  } catch (error) {
-    // Браузер запретил автозапуск — музыка включится после первого касания.
+  music.volume = 0.5;
+
+  function updateButton() {
+    const playing = !music.paused;
+
+    button.textContent = playing ? "Ⅱ" : "♫";
+    button.classList.toggle("playing", playing);
   }
-}
 
-/* Попытка автоматического запуска */
-window.addEventListener("load", startMusic);
-
-/* Включение после первого касания экрана */
-function startAfterTouch(event) {
-  if (event.target.closest("#musicButton")) return;
-
-  startMusic();
-
-  document.removeEventListener("click", startAfterTouch);
-  document.removeEventListener("touchstart", startAfterTouch);
-}
-
-document.addEventListener("click", startAfterTouch);
-document.addEventListener("touchstart", startAfterTouch, { passive: true });
-
-/* Ручное включение и пауза */
-musicButton.addEventListener("click", async () => {
-  if (weddingMusic.paused) {
-    await startMusic();
-  } else {
-    weddingMusic.pause();
-    updateMusicButton();
+  async function playMusic() {
+    try {
+      await music.play();
+      updateButton();
+    } catch (error) {
+      console.log("Автозапуск заблокирован:", error);
+    }
   }
+
+  button.addEventListener("click", async (event) => {
+    event.stopPropagation();
+
+    if (music.paused) {
+      try {
+        await music.play();
+      } catch (error) {
+        alert("Музыка не найдена. Проверьте файл music.mp3");
+        console.error(error);
+      }
+    } else {
+      music.pause();
+    }
+
+    updateButton();
+  });
+
+  function firstTouch(event) {
+    if (event.target.closest("#musicButton")) return;
+
+    playMusic();
+
+    document.removeEventListener("click", firstTouch);
+    document.removeEventListener("touchstart", firstTouch);
+  }
+
+  document.addEventListener("click", firstTouch);
+  document.addEventListener("touchstart", firstTouch, {
+    passive: true
+  });
+
+  music.addEventListener("play", updateButton);
+  music.addEventListener("pause", updateButton);
+
+  playMusic();
+  updateButton();
 });
-
-weddingMusic.addEventListener("play", updateMusicButton);
-weddingMusic.addEventListener("pause", updateMusicButton);
