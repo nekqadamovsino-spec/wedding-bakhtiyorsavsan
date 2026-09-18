@@ -87,3 +87,57 @@ if ("IntersectionObserver" in window) {
 } else {
   revealItems.forEach((item) => item.classList.add("is-visible"));
 }
+const weddingMusic = document.getElementById("weddingMusic");
+const musicButton = document.getElementById("musicButton");
+
+weddingMusic.volume = 0.5;
+
+function updateMusicButton() {
+  if (weddingMusic.paused) {
+    musicButton.textContent = "♫";
+    musicButton.classList.remove("playing");
+    musicButton.setAttribute("aria-label", "Включить музыку");
+  } else {
+    musicButton.textContent = "Ⅱ";
+    musicButton.classList.add("playing");
+    musicButton.setAttribute("aria-label", "Поставить музыку на паузу");
+  }
+}
+
+async function startMusic() {
+  try {
+    await weddingMusic.play();
+    updateMusicButton();
+  } catch (error) {
+    // Браузер запретил автозапуск — музыка включится после первого касания.
+  }
+}
+
+/* Попытка автоматического запуска */
+window.addEventListener("load", startMusic);
+
+/* Включение после первого касания экрана */
+function startAfterTouch(event) {
+  if (event.target.closest("#musicButton")) return;
+
+  startMusic();
+
+  document.removeEventListener("click", startAfterTouch);
+  document.removeEventListener("touchstart", startAfterTouch);
+}
+
+document.addEventListener("click", startAfterTouch);
+document.addEventListener("touchstart", startAfterTouch, { passive: true });
+
+/* Ручное включение и пауза */
+musicButton.addEventListener("click", async () => {
+  if (weddingMusic.paused) {
+    await startMusic();
+  } else {
+    weddingMusic.pause();
+    updateMusicButton();
+  }
+});
+
+weddingMusic.addEventListener("play", updateMusicButton);
+weddingMusic.addEventListener("pause", updateMusicButton);
